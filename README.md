@@ -1,2 +1,2 @@
-# hearthbeat
-Digital formal model of hearthbeat
+# heartbeat
+Formal digital twin of heartbeat
