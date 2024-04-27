@@ -11,11 +11,6 @@ class Mood:
         dictionary = self.database.get(label,self.nominal)
         return dictionary
 
-    def adddictionary(self, newlabel, dictionary):
-        self.database[newlabel] = dictionary
-        return dictionary
-
-
     def getmlmood(self, dictionary):
         #todo you have to implement the method considering the construction of the Bayesian Network model
         pass
