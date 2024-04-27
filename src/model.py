@@ -20,9 +20,10 @@ def model(variables, t, parameters):
 class Heart:
     def __init__(self, x0, b0, mode='normal'):
         mood = Mood()
-        self.paras = mood.getparameters('normal')
+        self.paras = mood.getparameters(mode)
         self.x0 = x0
         self.b0 = b0
+        self.initial = (x0, b0)
 
     def beat(self, t, parameters=None):
         parameters = self.paras if parameters is None else parameters

@@ -3,8 +3,11 @@ from inference import InferencedHeart
 import numpy as np
 
 
-def inferencing(initialconditions, time):
-    iheart = InferencedHeart(initialconditions)
+def inferencing(initialconditions, time, realdata):
+    x0, b0 = initialconditions
+    iheart = InferencedHeart(x0, b0)
+    results = iheart.inference(time, realdata)
+    return results
 
 
 def modelling(initialconditions, time):
@@ -18,5 +21,6 @@ if __name__ == '__main__':
     initial = (0,0)
     t = np.linspace(0, 3600, 3600*10)
     results = modelling(initial, t)
+    inferenced = inferencing(initial, t, results)
 
 
