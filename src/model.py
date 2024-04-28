@@ -1,6 +1,7 @@
 from scipy.integrate import odeint
 from moods import Mood
-
+import numpy as np
+import math
 
 def model(variables, t, parameters):
     try:
