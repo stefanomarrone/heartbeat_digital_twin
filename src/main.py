@@ -1,4 +1,4 @@
-from model import Heart
+from model import Heart, NoisyHeart
 from inference import InferencedHeart
 from moods import Mood
 import numpy as np
@@ -14,6 +14,13 @@ def inferencing(initialconditions, time, realdata):
 def modelling(initialconditions, time, condition):
     x0, b0 = initialconditions
     heart = Heart(x0, b0, condition)
+    data = heart.beat(time)
+    return data
+
+
+def noisymodelling(initialconditions, time, condition, snr):
+    x0, b0 = initialconditions
+    heart = NoisyHeart(x0, b0, condition, snr)
     data = heart.beat(time)
     return data
 
