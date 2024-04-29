@@ -1,0 +1,34 @@
+const {
+seconds = ${seconds},
+eps = ${eps},
+xa = ${xa},
+a = ${a}
+}
+
+fspn heartbeat = {
+place px fluid ${x0} 1000.0,
+place pb fluid ${b0} 1000.0
+;
+transition xchange timed 1,
+transition bchange timed 1
+;
+arc A1 output fluid xchange px discont(-1 * ((px-500) * (px-500) * (px-500) - a * (px-500) + (pb-500)) / eps,-1 * ((px-500) * (px-500) * (px-500) - a * (px-500) + (pb-500)) / eps,0),
+arc A2 input fluid px xchange discont(1 * ((px-500) * (px-500) * (px-500) - a * (px-500) + (pb-500)) / eps,1 * ((px-500) * (px-500) * (px-500) - a * (px-500) + (pb-500)) / eps,0),
+arc A3 output fluid bchange pb discont((px-500) - xa,(px-500) - xa,0),
+arc A4 input fluid pb bchange discont(xa - (px-500),xa - (px-500),0)
+;
+measure xplot mean (px-500),
+measure bplot mean (pb-500)
+}
+
+property {
+real SimulationTime ${seconds},
+real SimulationStep ${steps},
+integer SimulationCycles 5,
+real SampleStart 0.0,
+real Confidence 0.1,
+real SampleStep ${steps},
+real SampleEnd ${seconds},
+string xplotFile "${x_plot}",
+string bplotFile "${b_plot}"
+}

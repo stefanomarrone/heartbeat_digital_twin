@@ -30,3 +30,19 @@ class Heart:
         parameters = self.paras if parameters is None else parameters
         results = odeint(model, [self.x0, self.b0], t, args=(parameters,))
         return results
+
+
+
+class NoisyHeart(Heart):
+    def __init__(self, x0, b0, mode='normal', snratio=0.001):
+        super(NoisyHeart, self).__init__(x0, b0, mode)
+        self.snr = snratio
+
+    def beat(self, t, parameters=None):
+        signal = super(NoisyHeart, self).beat(t, parameters)
+        rms = [np.mean(s**2) for s in signal.transpose()]
+        std = [math.sqrt(r/self.snr) for r in rms]
+        noise = [np.random.normal(0, s, size=len(t)) for s in std]
+        noise = np.array(noise)
+        retval = signal + noise.transpose()
+        return retval

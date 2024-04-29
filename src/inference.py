@@ -14,10 +14,10 @@ def residual(parameters, initial, time, data):
 class InferencedHeart(Heart):
     def inference(self, time, data):
         params = Parameters()
-        params.add('eps', value=1, min=-1000., max=1000.)
-        params.add('a', value=1, min=-1000., max=1000.)
-        params.add('xa', value=1, min=-1000., max=1000.)
-        minimized = minimize(residual, params, args=(self.initial, time, data), method='leastsq')
+        params.add('eps', min=-1000., max=1000.)
+        params.add('a', min=-1000., max=1000.)
+        params.add('xa', min=-1000., max=1000.)
+        minimized = minimize(residual, params, args=(self.initial, time, data), method='least_squares',nan_policy='omit')
         names = minimized.var_names
         retval = dict()
         for name in names:
