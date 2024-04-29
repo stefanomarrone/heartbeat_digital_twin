@@ -9,7 +9,7 @@ from sklearn.tree import export_graphviz
 class Mood:
     def __init__(self):
         self.database = {
-            'normal': {'eps': 0.1, 'a': .5, 'xa': 1},
+            'normal': {'eps': 0.2, 'a': 1, 'xa': 0},
             # todo: search for parameters under coffee
             'coffee': {'eps': 0.001, 'a': .81, 'xa': .45}
         }
