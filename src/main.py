@@ -49,7 +49,8 @@ if __name__ == '__main__':
     makoparameters['concretefile'] = 'heartbeat_ghost.fspn'
     makoparameters['steps'] = step
     modelgenerator = FspnGenerator(template)
-    modelgenerator.execute(makoparameters)
+    analysisdata = modelgenerator.execute(makoparameters)
+    # plotting data
 
 
 
