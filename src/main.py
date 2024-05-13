@@ -142,7 +142,7 @@ if __name__ == '__main__':
             analysisdata.to_csv(method + '_results.csv', index=True)
         result_db[method] = single_results
         ntfy(method)
-        print("ending: " + method)
+        print("ending: " + method + '\n')
     # plotting data
     ntfy("Finished!")
     bestmethodname, filtered = filteringresults(result_db)
