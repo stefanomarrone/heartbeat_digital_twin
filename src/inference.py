@@ -1,6 +1,8 @@
-from model import Heart
-from lmfit import minimize, Parameters
+import lmfit
 
+from model import Heart
+from lmfit import minimize, Parameters, Model
+from time import sleep
 
 def residual(parameters, initial, time, data):
     x0, b0 = initial
@@ -12,14 +14,26 @@ def residual(parameters, initial, time, data):
 
 
 class InferencedHeart(Heart):
-    def inference(self, time, data):
+    def inference(self, time, data, methodtype):
         params = Parameters()
-        params.add('eps', min=-1000., max=1000.)
-        params.add('a', min=-1000., max=1000.)
-        params.add('xa', min=-1000., max=1000.)
-        minimized = minimize(residual, params, args=(self.initial, time, data), method='least_squares',nan_policy='omit')
-        names = minimized.var_names
+        params.add('eps', min=0.01, max=100.)
+        params.add('T', min=0.01, max=100.)
+        params.add('xa', min=0.01, max=100.)
         retval = dict()
-        for name in names:
-            retval[name] = minimized.params[name].value
-        return retval
+        errorstate = True
+        counter = 0
+        report = None
+        while errorstate and counter < 5:
+            try:
+                minimised = minimize(residual, params, args=(self.initial, time, data), method=methodtype)
+                errorstate = False
+            except ValueError:
+                counter += 1
+            except RuntimeError:
+                counter += 1
+            else:
+                report = lmfit.fit_report(minimised.params)
+                names = minimised.var_names
+                for name in names:
+                    retval[name] = minimised.params[name].value
+        return retval, errorstate, report

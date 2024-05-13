@@ -19,7 +19,7 @@ class FspnGenerator:
 
     def merge(self, df1, df2):
         dataset = pd.DataFrame(df1)
-        dataset.insert(2, "b", df2.b)
+        dataset.insert(2, "fspn b", df2['fspn b'])
         return dataset
 
     def filetotuplelist(self, fname):
@@ -35,9 +35,9 @@ class FspnGenerator:
 
     def extractingdata(self, xoutfilename, boutfilename):
         xdata = self.filetotuplelist(xoutfilename)
-        xdata.columns = ['time', 'x']
+        xdata.columns = ['fspn time', 'fspn x']
         bdata = self.filetotuplelist(boutfilename)
-        bdata.columns = ['time', 'b']
+        bdata.columns = ['fspn time', 'fspn b']
         fspndata = self.merge(xdata,bdata)
         return fspndata
 

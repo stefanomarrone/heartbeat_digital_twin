@@ -6,14 +6,14 @@ import math
 def model(variables, t, parameters):
     try:
         eps = parameters['eps'].value
-        a = parameters['a'].value
+        T = parameters['T'].value
         xa = parameters['xa'].value
     except:
         eps = parameters['eps']
-        a = parameters['a']
+        T = parameters['T']
         xa = parameters['xa']
     x, b = variables
-    dxdt = -1 * (x ** 3 - a * x + b) / eps
+    dxdt = -1 * (x ** 3 - T * x + b) / eps
     dbdt = x - xa
     return [dxdt, dbdt]
 

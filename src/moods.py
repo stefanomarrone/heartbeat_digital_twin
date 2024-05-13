@@ -1,6 +1,5 @@
 from sklearn import tree
 import pandas as pd
-import matplotlib.pyplot as plt
 from six import StringIO
 import pydotplus
 from sklearn.tree import export_graphviz
@@ -9,15 +8,18 @@ from sklearn.tree import export_graphviz
 class Mood:
     def __init__(self):
         self.database = {
-            'normal': {'eps': 0.2, 'a': 1, 'xa': 0},
+            'normal': {'eps': 0.1, 'T': 1, 'xa': 0.01},
             # todo: search for parameters under coffee
-            'coffee': {'eps': 0.001, 'a': .81, 'xa': .45}
+            'coffee': {'eps': 0.001, 'T': .81, 'xa': .45}
         }
         self.nominal = 'normal'
         self.classifier = tree.DecisionTreeClassifier()
         features, target = self.getdata()
         self.classifier = self.classifier.fit(features, target)
         self.draw()
+
+    def get(self, label):
+        return self.database[label]
 
     def getdata(self):
         parameternames = self.database[self.nominal].keys()
