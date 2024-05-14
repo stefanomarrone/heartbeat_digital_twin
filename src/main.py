@@ -146,7 +146,7 @@ if __name__ == '__main__':
     # plotting data
     ntfy("Finished!")
     bestmethodname, filtered = filteringresults(result_db)
-    plotting_results(initial_dataframe, filtered, 'x')
-    plotting_results(initial_dataframe, filtered, 'b')
+    #plotting_results(initial_dataframe, filtered, 'x')
+    #plotting_results(initial_dataframe, filtered, 'b')
     reporting(result_db, bestmethodname)
     ntfy("Accomplished!")
