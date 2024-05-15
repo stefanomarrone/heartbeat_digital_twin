@@ -3,9 +3,9 @@ import pandas as pd
 from six import StringIO
 import pydotplus
 from sklearn.tree import export_graphviz
+from src.metaclasses import Singleton
 
-
-class Mood:
+class Mood(metaclass=Singleton):
     def __init__(self):
         self.database = {
             'normal': {'eps': 0.1, 'T': 1, 'xa': 0.1}

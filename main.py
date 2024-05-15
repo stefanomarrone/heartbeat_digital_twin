@@ -1,14 +1,12 @@
-import math
 import time
-
 import numpy as np
 import pandas as pd
 import requests
-from matplotlib import pyplot as plt
 from src.fspns import FspnGenerator
 from src.inference import InferencedHeart
 from src.model import Heart, NoisyHeart
 from src.moods import Mood
+from src.reporting import computeerror, plotting_results, plotting_performance, plotting_prediction, reporting
 
 
 def inferencing(initialconditions, time, realdata, methodname):
@@ -32,65 +30,8 @@ def noisymodelling(initialconditions, time, condition, snr):
     return data
 
 
-def plotting_results(odedf, fspndf, feature):
-    plt.rcParams["figure.figsize"] = [7.00, 3.50]
-    plt.rcParams["figure.autolayout"] = True
-    ax = odedf.plot(x='ode time', y='ode' + feature)
-    fspndf.plot(ax=ax, x='fspn time', y='fspn ' + feature)
-    L = plt.legend()
-    L.get_texts()[0].set_text('ODE')
-    L.get_texts()[1].set_text('FSPN')
-    plt.xlabel('Time [secs]')
-    plt.ylabel(feature)
-    plt.savefig('output/' + feature + '.pdf')
-
-
-def computeerror(expected, actual):
-    globalerror = 0
-    for k in expected.keys():
-        error = (expected[k] - actual[k]) / expected[k]
-        globalerror += math.sqrt(error ** 2)
-    return globalerror
-
-
-def minerror(x, y):
-    retval = x
-    if x[1] > y[1]:
-        retval = y
-    return retval
-
-
 def ntfy(msg):
     requests.post("https://ntfy.sh/alerts-heartbeat-code", data=msg.encode(encoding='utf-8'))
-
-
-def filteringresults(result_db):
-    besterror = None
-    bestmethod = None
-    bestdata = None
-    for k in result_db.keys():
-        result = result_db[k]
-        if not result['errorstate']:
-            if bestmethod is None or besterror > result['error']:
-                bestmethod, bestdata, besterror = k, result['data'], result['error']
-    return bestmethod, bestdata
-
-
-def reporting(general_db, methodname):
-    reportname = 'output/report.txt'
-    handler = open(reportname, 'w')
-    handler.write("Best method = " + methodname + '\n*****\n')
-    for key in general_db.keys():
-        item = general_db[key]
-        handler.write(key + '\n')
-        handler.write("Error state = " + str(item['errorstate']) + '\n')
-        handler.write("Inference time = " + str(item['inferencetime']) + '\n')
-        if item['errorstate'] is False:
-            handler.write("Error  = " + str(item['error']) + '\n')
-            handler.write("Simulation time = " + str(item['simulationtime']) + '\n')
-            handler.write("Report  = " + str(item['report']) + '\n')
-        handler.write('*****\n\n')
-    handler.close()
 
 
 def influenceanalysis():
@@ -142,7 +83,7 @@ if __name__ == '__main__':
             single_results['inferencetime'] = stoptime - starttime
             single_results['errorstate'] = errorstate
             if not errorstate:
-                results = mood.getmostlikelymood(inferenced)
+                mostprobable = mood.getmostlikelymood(inferenced)
                 # executing FSPN model
                 makoparameters = dict(inferenced)
                 makoparameters['seconds'] = seconds
@@ -157,6 +98,7 @@ if __name__ == '__main__':
                 analysisdata = modelgenerator.execute(makoparameters)
                 stoptime = time.time()
                 relativeerror = computeerror(mood.get(mood_name), dict(inferenced))
+                single_results['recognized'] = mostprobable
                 single_results['simulationtime'] = stoptime - starttime
                 single_results['error'] = relativeerror
                 single_results['data'] = analysisdata
@@ -164,9 +106,16 @@ if __name__ == '__main__':
             result_db[mood_name][method] = single_results
             ntfy(method)
     # plotting data
-    ntfy("Finished!")
+    ntfy("Analysis!")
+    ntfy("Performance")
+    plotting_performance(result_db)
+    plotting_prediction(result_db)
+    reporting(result_db)
+'''
+    plotting_results(initial_dataframe, filtered, 'x')
     bestmethodname, filtered = filteringresults(result_db)
     plotting_results(initial_dataframe, filtered, 'x')
     plotting_results(initial_dataframe, filtered, 'b')
     reporting(result_db, bestmethodname)
     ntfy("Accomplished!")
+'''
