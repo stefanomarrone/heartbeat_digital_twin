@@ -1,5 +1,5 @@
 from scipy.integrate import odeint
-from moods import Mood
+from src.moods import Mood
 import numpy as np
 import math
 
@@ -25,6 +25,7 @@ class Heart:
         self.x0 = x0
         self.b0 = b0
         self.initial = (x0, b0)
+
 
     def beat(self, t, parameters=None):
         parameters = self.paras if parameters is None else parameters

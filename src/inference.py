@@ -1,8 +1,8 @@
 import lmfit
 
-from model import Heart
+from src.model import Heart
 from lmfit import minimize, Parameters, Model
-from time import sleep
+from random import uniform
 
 def residual(parameters, initial, time, data):
     x0, b0 = initial
@@ -16,9 +16,9 @@ def residual(parameters, initial, time, data):
 class InferencedHeart(Heart):
     def inference(self, time, data, methodtype):
         params = Parameters()
-        params.add('eps', min=0.01, max=100.)
-        params.add('T', min=0.01, max=100.)
-        params.add('xa', min=0.01, max=100.)
+        params.add('eps', min=0.01, max=100, value= uniform(0.01,100))
+        params.add('T', min=0.01, max=100, value = uniform(0.01,100))
+        params.add('xa', min=0.01, max=100, value = uniform(0.01,100))
         retval = dict()
         errorstate = True
         counter = 0

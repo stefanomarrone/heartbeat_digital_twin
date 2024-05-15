@@ -8,11 +8,17 @@ from sklearn.tree import export_graphviz
 class Mood:
     def __init__(self):
         self.database = {
-            'normal': {'eps': 0.1, 'T': 1, 'xa': 0.01},
-            # todo: search for parameters under coffee
-            'coffee': {'eps': 0.001, 'T': .81, 'xa': .45}
+            'normal': {'eps': 0.1, 'T': 1, 'xa': 0.1}
         }
         self.nominal = 'normal'
+
+    def addmood(self, label, parameters):
+        self.database[label] = parameters
+
+    def moods(self):
+        return self.database.keys()
+
+    def trainclassfier(self):
         self.classifier = tree.DecisionTreeClassifier()
         features, target = self.getdata()
         self.classifier = self.classifier.fit(features, target)
@@ -50,7 +56,7 @@ class Mood:
                         special_characters=True, feature_names=feature_cols,
                         class_names=target_names)
         graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
-        graph.write_pdf('moodclassifier.pdf')
+        graph.write_pdf('output/moodclassifier.pdf')
 
 
     def getmostlikelymood(self, dictionary):
