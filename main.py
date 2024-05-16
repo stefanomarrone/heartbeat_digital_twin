@@ -33,7 +33,7 @@ def noisymodelling(initialconditions, time, condition, snr):
 
 def ntfy(msg):
     requests.post("https://ntfy.sh/alerts-heartbeat-code", data=msg.encode(encoding='utf-8'))
-
+    print(msg)
 
 def influenceanalysis():
     conditionrepo = Mood()
