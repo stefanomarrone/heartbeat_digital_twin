@@ -6,7 +6,8 @@ from src.fspns import FspnGenerator
 from src.inference import InferencedHeart
 from src.model import Heart, NoisyHeart
 from src.moods import Mood
-from src.reporting import computeerror, plotting_results, plotting_performance, plotting_prediction, reporting
+from src.reporting import computeerror, plotting_results, plotting_performance, plotting_prediction, reporting, \
+    best_retrieve, plotting_odes
 
 
 def inferencing(initialconditions, time, realdata, methodname):
@@ -36,24 +37,25 @@ def ntfy(msg):
 
 def influenceanalysis():
     conditionrepo = Mood()
-    conditionrepo.addmood('normal', {'eps': 0.5, 'T': 10, 'xa': 0.1})
-    conditionrepo.addmood('coffee', {'eps': 0.1, 'T': 50, 'xa': 0.1})
-    conditionrepo.addmood('sleeping', {'eps': 0.05, 'T': 4, 'xa': 0.1})
+    conditionrepo.addmood('normal', {'eps': 0.5, 'T': 1, 'xa': 0.1})
+    conditionrepo.addmood('coffee', {'eps': 0.1, 'T': 1.2, 'xa': 0.1})
+    conditionrepo.addmood('sleeping', {'eps': 1, 'T': 0.5, 'xa': 0.01})
     conditionrepo.trainclassfier()
     return conditionrepo
 
 
 def getMethods():
-    #methods = ['leastsq', 'least_squares', 'differential_evolution', 'brute', 'basinhopping', 'ampgo', 'nelder',
-    # 'lbfgsb', 'powell', 'cg', 'newton', 'cobyla', 'bfgs', 'tnc', 'trust-ncg', 'trust-exact', 'trust-krylov',
-    # 'trust-constr', 'dogleg', 'slsqp', 'emcee', 'shgo', 'dual_annealing']
-    methodlist = ['leastsq', 'least_squares', 'powell']
+    methodlist = ['leastsq', 'least_squares', 'differential_evolution', 'brute', 'basinhopping', 'ampgo', 'nelder',
+               'lbfgsb', 'powell', 'cg', 'newton', 'cobyla', 'bfgs', 'tnc', 'trust-ncg', 'trust-exact',
+               'trust-krylov', 'trust-constr', 'dogleg', 'slsqp', 'emcee', 'shgo', 'dual_annealing']
+    #methodlist = ['leastsq', 'least_squares', 'powell']
     return methodlist
+
 
 
 if __name__ == '__main__':
     # preparation
-    seconds = 10
+    seconds = 20
     x0 = 1
     b0 = 0
     template = 'resources/heartbeat_template.fspn'
@@ -66,12 +68,14 @@ if __name__ == '__main__':
     initial = (x0, b0)
     t, step = np.linspace(0, seconds, seconds * 10, retstep=True)
     result_db = dict()
+    ode_db = dict()
     for mood_name in mood.moods():
         result_db[mood_name] = dict()
         modelled = modelling(initial, t, mood_name)
         initial_dataframe = pd.DataFrame(list(modelled))
         initial_dataframe.columns = ['ode x', 'ode b']
         initial_dataframe.insert(2, "ode time", t)
+        ode_db[mood_name] = initial_dataframe
         initial_dataframe.to_csv('output/' + mood_name + '.csv', index=True)
         for method in methods:
             # inferencing the model from data
@@ -111,11 +115,12 @@ if __name__ == '__main__':
     plotting_performance(result_db)
     plotting_prediction(result_db)
     reporting(result_db)
-'''
-    plotting_results(initial_dataframe, filtered, 'x')
-    bestmethodname, filtered = filteringresults(result_db)
-    plotting_results(initial_dataframe, filtered, 'x')
-    plotting_results(initial_dataframe, filtered, 'b')
-    reporting(result_db, bestmethodname)
+    best_mood, bestmethodname, filtered = best_retrieve(result_db)
+    plotting_results(ode_db[best_mood], filtered, 'x')
+    plotting_results(ode_db[best_mood], filtered, 'b')
+    plotting_odes(ode_db, 'x')
+    plotting_odes(ode_db, 'b')
+    print("Best mood: " + best_mood)
+    print("Best method: " + bestmethodname)
+    ntfy("Closing everything!")
     ntfy("Accomplished!")
-'''
