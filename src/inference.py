@@ -17,8 +17,8 @@ class InferencedHeart(Heart):
     def inference(self, time, data, methodtype):
         params = Parameters()
         params.add('eps', min=0.01, max=10)
-        params.add('T', min=0.01, max=100)
-        params.add('xa', min=0.01, max=1)
+        params.add('T', min=0.01, max=10)
+        params.add('xa', min=0.01, max=10)
         retval = dict()
         errorstate = True
         counter = 0

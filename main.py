@@ -43,11 +43,13 @@ def influenceanalysis():
     conditionrepo.trainclassfier()
     return conditionrepo
 
+'''
+'''
 
 def getMethods():
     methodlist = ['leastsq', 'least_squares', 'differential_evolution', 'brute', 'basinhopping', 'ampgo', 'nelder',
-               'lbfgsb', 'powell', 'cg', 'newton', 'cobyla', 'bfgs', 'tnc', 'trust-ncg', 'trust-exact',
-               'trust-krylov', 'trust-constr', 'dogleg', 'slsqp', 'emcee', 'shgo', 'dual_annealing']
+                  'lbfgsb', 'powell', 'cg', 'newton', 'cobyla', 'bfgs', 'tnc', 'trust-ncg', 'trust-exact', 'trust-krylov',
+                  'trust-constr', 'dogleg', 'slsqp', 'emcee', 'shgo', 'dual_annealing']
     #methodlist = ['leastsq', 'least_squares', 'powell']
     return methodlist
 
@@ -55,7 +57,7 @@ def getMethods():
 
 if __name__ == '__main__':
     # preparation
-    seconds = 20
+    seconds = 25
     x0 = 1
     b0 = 0
     template = 'resources/heartbeat_template.fspn'
@@ -107,6 +109,8 @@ if __name__ == '__main__':
                 single_results['error'] = relativeerror
                 single_results['data'] = analysisdata
                 analysisdata.to_csv('output/' + mood_name + '_' + method + '_results.csv', index=True)
+                plotting_results(initial_dataframe, analysisdata, 'x', mood_name + '_' + method + '_x')
+                plotting_results(initial_dataframe, analysisdata, 'b', mood_name + '_' + method + '_b')
             result_db[mood_name][method] = single_results
             ntfy(method)
     # plotting data
@@ -116,8 +120,8 @@ if __name__ == '__main__':
     plotting_prediction(result_db)
     reporting(result_db)
     best_mood, bestmethodname, filtered = best_retrieve(result_db)
-    plotting_results(ode_db[best_mood], filtered, 'x')
-    plotting_results(ode_db[best_mood], filtered, 'b')
+    plotting_results(ode_db[best_mood], filtered, 'x', 'time_best_x')
+    plotting_results(ode_db[best_mood], filtered, 'b', 'time_best_b')
     plotting_odes(ode_db, 'x')
     plotting_odes(ode_db, 'b')
     print("Best mood: " + best_mood)

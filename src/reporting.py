@@ -19,7 +19,7 @@ def filteringresults(result_db):
 
 
 
-def plotting_results(odedf, fspndf, feature):
+def plotting_results(odedf, fspndf, feature, name):
     plt.rcParams["figure.figsize"] = [7.00, 3.50]
     plt.rcParams["figure.autolayout"] = True
     ax = odedf.plot(x='ode time', y='ode ' + feature)
@@ -29,7 +29,8 @@ def plotting_results(odedf, fspndf, feature):
     L.get_texts()[1].set_text('FSPN')
     plt.xlabel('Time [secs]')
     plt.ylabel(feature)
-    plt.savefig('output/' + feature + '.pdf')
+    plt.savefig('output/' + name + '.pdf')
+    plt.close()
 
 
 def computeerror(expected, actual):
@@ -55,7 +56,7 @@ def inner_reporting(d, feature, xlabel, ylabel, filename):
             times[meth] = list()
     for moo in moods:
         for meth in d[moo].keys():
-            if d[moo][meth]['errorstate'] == False:
+            if not d[moo][meth]['errorstate']:
                 times[meth].append(d[moo][meth][feature])
     for meth in list(times.keys()):
         if len(times[meth]) == 0:
@@ -64,10 +65,16 @@ def inner_reporting(d, feature, xlabel, ylabel, filename):
         times[meth] = mean(times[meth])
     courses = list(times.keys())
     values = list(times.values())
-    plt.bar(courses, values, color='blue', width=0.4)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
+    labels = [str(v) for v in values]
+    fig, ax = plt.subplots(figsize=(16, 9))
+    ax.set_xscale('log')
+    ax.barh(courses, values, color='blue', height= 0.3)
+    ax.bar_label(ax.containers[0], label_type='edge')
+    ax.margins(y=0.1)
+    plt.xlabel(ylabel)
+    plt.ylabel(xlabel)
     plt.savefig(filename)
+    plt.close()
 
 
 def reporting(general_db):
@@ -81,6 +88,7 @@ def reporting(general_db):
             handler.write("Error state = " + str(item['errorstate']) + '\n')
             handler.write("Inference time = " + str(item['inferencetime']) + '\n')
             if item['errorstate'] is False:
+                handler.write("Most Probable Mood = " + str(item['recognized']) + '\n')
                 handler.write("Error  = " + str(item['error']) + '\n')
                 handler.write("Simulation time = " + str(item['simulationtime']) + '\n')
                 handler.write("Report  = " + str(item['report']) + '\n')
@@ -88,11 +96,11 @@ def reporting(general_db):
     handler.close()
 
 def plotting_prediction(d):
-    inner_reporting(d, 'error', "Algorithms", "Relative error", 'output/prediction.pdf')
+    inner_reporting(d, 'error', "Algorithms", "Relative Error [%]", 'output/prediction.pdf')
 
 
 def plotting_performance(d):
-    inner_reporting(d, 'inferencetime', "Algorithms", "Inference time [secs]", 'output/performance.pdf')
+    inner_reporting(d, 'inferencetime', "Algorithms", "Inference Time [secs]", 'output/performance.pdf')
 
 
 def best_retrieve(d):
@@ -120,5 +128,6 @@ def plotting_odes(db, feature):
     plt.xlabel('Time [secs]')
     plt.ylabel(feature)
     plt.savefig('output/ode_moods_' + feature + '.pdf')
+    plt.close()
 
 
