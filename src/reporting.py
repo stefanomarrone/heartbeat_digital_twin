@@ -29,7 +29,7 @@ def plotting_results(odedf, fspndf, feature, name):
     L.get_texts()[1].set_text('FSPN')
     plt.xlabel('Time [secs]')
     plt.ylabel(feature)
-    plt.savefig('output/' + name + '.pdf')
+    plt.savefig('test/' + name + '.pdf')
     plt.close()
 
 
@@ -78,7 +78,7 @@ def inner_reporting(d, feature, xlabel, ylabel, filename):
 
 
 def reporting(general_db):
-    reportname = 'output/report.txt'
+    reportname = 'test/report.txt'
     handler = open(reportname, 'w')
     for key in general_db.keys():
         for kkey in general_db[key].keys():
@@ -96,11 +96,11 @@ def reporting(general_db):
     handler.close()
 
 def plotting_prediction(d):
-    inner_reporting(d, 'error', "Algorithms", "Relative Error [%]", 'output/prediction.pdf')
+    inner_reporting(d, 'error', "Algorithms", "Relative Error [%]", 'test/prediction.pdf')
 
 
 def plotting_performance(d):
-    inner_reporting(d, 'inferencetime', "Algorithms", "Inference Time [secs]", 'output/performance.pdf')
+    inner_reporting(d, 'inferencetime', "Algorithms", "Inference Time [secs]", 'test/performance.pdf')
 
 
 def best_retrieve(d):
@@ -127,7 +127,7 @@ def plotting_odes(db, feature):
         renamed.plot(ax=ax, x='ode time', y=mood)
     plt.xlabel('Time [secs]')
     plt.ylabel(feature)
-    plt.savefig('output/ode_moods_' + feature + '.pdf')
+    plt.savefig('test/ode_moods_' + feature + '.pdf')
     plt.close()
 
 

@@ -24,13 +24,6 @@ def modelling(initialconditions, time, condition):
     return data
 
 
-def noisymodelling(initialconditions, time, condition, snr):
-    x0, b0 = initialconditions
-    heart = NoisyHeart(x0, b0, condition, snr)
-    data = heart.beat(time)
-    return data
-
-
 def ntfy(msg):
     requests.post("https://ntfy.sh/alerts-heartbeat-code", data=msg.encode(encoding='utf-8'))
     print(msg)
@@ -60,7 +53,7 @@ def getMethods():
 
 if __name__ == '__main__':
     # preparation
-    seconds = 15
+    seconds = 25
     x0 = 1
     b0 = 0
     template = 'resources/heartbeat_template.fspn'
@@ -85,22 +78,22 @@ if __name__ == '__main__':
         for method in methods:
             # inferencing the model from data
             starttime = time.time()
-            inferenced, errorstate, report = inferencing(initial, t, modelled, method)
+            inferenced, errorstate, report = mood.getparameters(mood_name), False, ''
             stoptime = time.time()
             single_results = dict()
             single_results['report'] = report
             single_results['inferencetime'] = stoptime - starttime
             single_results['errorstate'] = errorstate
             if not errorstate:
-                mostprobable = mood.getmostlikelymood(inferenced)
+                mostprobable = mood_name
                 # executing FSPN model
                 makoparameters = dict(inferenced)
                 makoparameters['seconds'] = seconds
                 makoparameters['x0'] = x0 + 500
                 makoparameters['b0'] = b0 + 500
-                makoparameters['b_plot'] = "output/b_plot.out"
-                makoparameters['x_plot'] = "output/x_plot.out"
-                makoparameters['concretefile'] = 'output/heartbeat_temp.fspn'
+                makoparameters['b_plot'] = "test/b_plot.out"
+                makoparameters['x_plot'] = "test/x_plot.out"
+                makoparameters['concretefile'] = 'test/heartbeat_temp.fspn'
                 makoparameters['steps'] = step
                 modelgenerator = FspnGenerator(template)
                 starttime = time.time()
@@ -111,7 +104,7 @@ if __name__ == '__main__':
                 single_results['simulationtime'] = stoptime - starttime
                 single_results['error'] = relativeerror
                 single_results['data'] = analysisdata
-                analysisdata.to_csv('output/' + mood_name + '_' + method + '_results.csv', index=True)
+                analysisdata.to_csv('test/' + mood_name + '_' + method + '_results.csv', index=True)
                 plotting_results(initial_dataframe, analysisdata, 'x', mood_name + '_' + method + '_x')
                 plotting_results(initial_dataframe, analysisdata, 'b', mood_name + '_' + method + '_b')
             result_db[mood_name][method] = single_results

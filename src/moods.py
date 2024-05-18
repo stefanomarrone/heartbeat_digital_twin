@@ -8,7 +8,6 @@ from src.metaclasses import Singleton
 class Mood(metaclass=Singleton):
     def __init__(self):
         self.database = {
-            'normal': {'eps': 0.1, 'T': 1, 'xa': 0.1}
         }
         self.nominal = 'normal'
 
@@ -28,7 +27,8 @@ class Mood(metaclass=Singleton):
         return self.database[label]
 
     def getdata(self):
-        parameternames = self.database[self.nominal].keys()
+        keys = list(self.database.keys())
+        parameternames = self.database[keys[0]].keys()
         column = list(parameternames)
         column.append('mood')
         df = pd.DataFrame(columns=column)
@@ -49,7 +49,8 @@ class Mood(metaclass=Singleton):
 
     def draw(self):
         dot_data = StringIO()
-        feature_cols = list(self.database[self.nominal].keys())
+        keys = list(self.database.keys())
+        feature_cols = list(self.database[keys[0]].keys())
         target_names = list(self.database.keys())
         export_graphviz(self.classifier, out_file=dot_data,
                         filled=True, rounded=True,
@@ -60,7 +61,8 @@ class Mood(metaclass=Singleton):
 
 
     def getmostlikelymood(self, dictionary):
-        parameternames = list(self.database[self.nominal].keys())
+        keys = list(self.database.keys())
+        parameternames = list(self.database[keys[0]].keys())
         df = pd.DataFrame(columns=parameternames)
         for parametername in parameternames:
             df.at[0, parametername] = dictionary[parametername]
