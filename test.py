@@ -44,9 +44,12 @@ def influenceanalysis():
 '''
 
 def getMethods():
-    methodlist = ['leastsq', 'least_squares', 'differential_evolution', 'brute', 'basinhopping', 'ampgo', 'nelder',
+    if True:
+        methodlist = ['leastsq', 'least_squares', 'differential_evolution', 'brute', 'basinhopping', 'ampgo', 'nelder',
                   'lbfgsb', 'powell', 'cg', 'newton', 'cobyla', 'bfgs', 'tnc', 'trust-ncg', 'trust-exact', 'trust-krylov',
                   'trust-constr', 'dogleg', 'slsqp', 'emcee', 'shgo', 'dual_annealing']
+    else:
+        methodlist = ['powell']
     return methodlist
 
 
@@ -105,21 +108,21 @@ if __name__ == '__main__':
                 single_results['error'] = relativeerror
                 single_results['data'] = analysisdata
                 analysisdata.to_csv('test/' + mood_name + '_' + method + '_results.csv', index=True)
-                plotting_results(initial_dataframe, analysisdata, 'x', mood_name + '_' + method + '_x')
-                plotting_results(initial_dataframe, analysisdata, 'b', mood_name + '_' + method + '_b')
+                plotting_results(initial_dataframe, analysisdata, 'x', mood_name + '_' + method + '_x', 'test/')
+                plotting_results(initial_dataframe, analysisdata, 'b', mood_name + '_' + method + '_b', 'test/')
             result_db[mood_name][method] = single_results
             ntfy(method)
     # plotting data
     ntfy("Analysis!")
     ntfy("Performance")
-    plotting_performance(result_db)
-    plotting_prediction(result_db)
-    reporting(result_db)
+    plotting_performance(result_db, 'test/')
+    plotting_prediction(result_db, 'test/')
+    reporting(result_db, 'test/')
     best_mood, bestmethodname, filtered = best_retrieve(result_db)
-    plotting_results(ode_db[best_mood], filtered, 'x', 'time_best_x')
-    plotting_results(ode_db[best_mood], filtered, 'b', 'time_best_b')
-    plotting_odes(ode_db, 'x')
-    plotting_odes(ode_db, 'b')
+    plotting_results(ode_db[best_mood], filtered, 'x', 'time_best_x', 'test/')
+    plotting_results(ode_db[best_mood], filtered, 'b', 'time_best_b', 'test/')
+    plotting_odes(ode_db, 'x', 'test/')
+    plotting_odes(ode_db, 'b', 'test/')
     print("Best mood: " + best_mood)
     print("Best method: " + bestmethodname)
     ntfy("Closing everything!")
