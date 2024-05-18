@@ -19,7 +19,7 @@ def filteringresults(result_db):
 
 
 
-def plotting_results(odedf, fspndf, feature, name):
+def plotting_results(odedf, fspndf, feature, name, folder):
     plt.rcParams["figure.figsize"] = [7.00, 3.50]
     plt.rcParams["figure.autolayout"] = True
     ax = odedf.plot(x='ode time', y='ode ' + feature)
@@ -29,7 +29,7 @@ def plotting_results(odedf, fspndf, feature, name):
     L.get_texts()[1].set_text('FSPN')
     plt.xlabel('Time [secs]')
     plt.ylabel(feature)
-    plt.savefig('test/' + name + '.pdf')
+    plt.savefig(folder + name + '.pdf')
     plt.close()
 
 
@@ -77,8 +77,8 @@ def inner_reporting(d, feature, xlabel, ylabel, filename):
     plt.close()
 
 
-def reporting(general_db):
-    reportname = 'test/report.txt'
+def reporting(general_db, folder):
+    reportname = folder + 'report.txt'
     handler = open(reportname, 'w')
     for key in general_db.keys():
         for kkey in general_db[key].keys():
@@ -95,12 +95,12 @@ def reporting(general_db):
             handler.write('*****\n\n')
     handler.close()
 
-def plotting_prediction(d):
-    inner_reporting(d, 'error', "Algorithms", "Relative Error [%]", 'test/prediction.pdf')
+def plotting_prediction(d, folder):
+    inner_reporting(d, 'error', "Algorithms", "Relative Error [%]", folder + 'prediction.pdf')
 
 
-def plotting_performance(d):
-    inner_reporting(d, 'inferencetime', "Algorithms", "Inference Time [secs]", 'test/performance.pdf')
+def plotting_performance(d, folder):
+    inner_reporting(d, 'inferencetime', "Algorithms", "Inference Time [secs]", folder + 'performance.pdf')
 
 
 def best_retrieve(d):
@@ -116,7 +116,7 @@ def best_retrieve(d):
     return mood, method, d[mood][method]['data']
 
 
-def plotting_odes(db, feature):
+def plotting_odes(db, feature, folder):
     plt.rcParams["figure.figsize"] = [7.00, 3.50]
     plt.rcParams["figure.autolayout"] = True
     fig, ax = plt.subplots()
@@ -127,7 +127,7 @@ def plotting_odes(db, feature):
         renamed.plot(ax=ax, x='ode time', y=mood)
     plt.xlabel('Time [secs]')
     plt.ylabel(feature)
-    plt.savefig('test/ode_moods_' + feature + '.pdf')
+    plt.savefig(folder + 'ode_moods_' + feature + '.pdf')
     plt.close()
 
 
